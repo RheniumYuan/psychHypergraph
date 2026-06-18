@@ -1,0 +1,8 @@
+citEntry(
+  entry = "Manual",
+  title = "psychHypergraph: Information-Theoretic Hypergraph Analysis",
+  author = person("Minghao", "Yuan"),
+  year = "2026",
+  note = "R package version 0.1.0",
+  url = "https://github.com/YourName/psychHypergraph"
+)

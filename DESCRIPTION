@@ -42,3 +42,5 @@ Suggests:
     tibble,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://github.com/RheniumYuan/psychHypergraph
+BugReports: https://github.com/RheniumYuan/psychHypergraph/issues

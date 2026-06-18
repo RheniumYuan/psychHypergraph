@@ -1,6 +1,6 @@
 citEntry(
   entry = "Manual",
-  title = "psychHypergraph: Information-Theoretic Hypergraph Analysis",
+  title = "psychHypergraph: Information-Theoretic Hypergraph Analysis for Psychometric Data",
   author = person("Minghao", "Yuan"),
   year = "2026",
   note = "R package version 0.1.0",

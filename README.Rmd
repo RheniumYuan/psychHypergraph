@@ -1,0 +1,90 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# psychHypergraph
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+**psychHypergraph** implements information-theoretic hypergraph analysis for psychometric data, based on Marinazzo et al. (2024) and Possenti et al. (2026). The package provides tools for constructing psychometric hypergraphs, identifying synergistic and redundant higher-order interactions, centrality analysis, clustering, and visualization.
+
+## Installation
+
+```{r, eval = FALSE}
+# install.packages("remotes")
+remotes::install_github("rheniumyuan/psychHypergraph")
+```
+
+## Key Features
+
+- **Hypergraph construction** via `build_hypergraph()`: a complete pipeline that preprocesses data, generates candidate hyperedges, computes O-information, and performs three-step hyperedge validation and selection (permutation test, bootstrap stability assessment, and hierarchical validation) (Possenti et al., 2026).
+- **O-information**: an information-theoretic measure proposed that quantifies the balance between redundant and synergistic higher-order statistical dependencies among variables (Rosas et al., 2019).
+- **Multiple candidate generation strategies**: implements exhaustive search and clique-based candidate generation strategies.
+- **Node degree centrality** via `node_degree()`: calculate node degree centrality for each node.
+- **Spectral clustering** via `spectral_clustering()`: perform spectral clustering (similar to `HySC` in python library `hypergraphx (HGX)`) on hypergraphs.
+- **Visualization**: `plot()` for hypergraph visualization (based on `HyperG` package), `plot_hyperedge()` for forest plots of O-information estimates, and `plot_node_degree()` for centrality profiles.
+
+## Example
+
+### Constructing a psychometric hypergraph
+
+```{r example}
+library(psychHypergraph)
+
+# Load example data
+data(bfi, package = "psych")
+
+# Build a psychometric hypergraph using clique-based candidate generation
+hg <- build_hypergraph(
+  data = bfi[, 1:25],
+  cor_method = "pearson",
+  k = 3:4,
+  candidate_method = "clique",
+  n_perm = 100, # Reduced for faster example; use 1000+ for real analysis
+  n_boot = 100,
+  seed = 123,
+  parallel = FALSE
+)
+
+# Inspect results
+print(hg)
+```
+
+### Analyzing the structure of the hypergraph
+
+```{r}
+# Node degree centrality
+plot_node_degree(hg, graph_type = c("synergistic","redundant"), style = "both")
+
+# Spectral clustering
+clustering <- spectral_clustering(hg, K = 5)
+print(clustering)
+```
+
+### Visualizing the hypergraph
+
+```{r plot}
+# Visualize the hypergraph
+plot(hg, top_n = 30, type = "full", vertex.size = 20, groups = clustering$membership)
+
+# visualize hyperedges
+plot_hyperedge(hg, show_edge_label = FALSE, significant_only = TRUE)
+```
+
+## References
+
+- Marinazzo, D., Van Roozendaal, J., Rosas, F. E., Stella, M., Comolatti, R., Colenbier, N., Stramaglia, S., & Rosseel, Y. (2024). An information-theoretic approach to build hypergraphs in psychometrics. *Behavior Research Methods*, *56*(7), 8057–8079. https://doi.org/10.3758/s13428-024-02471-8
+- Possenti, F., Girelli, L., Tieri, P., & Petti, M. (2026). Multiplex Hypergraph Modeling of Higher Order Structures in Psychometric Networks (Version 1). arXiv. https://doi.org/10.48550/ARXIV.2604.22744
+- Rosas, F. E., Mediano, P. A. M., Gastpar, M., & Jensen, H. J. (2019). Quantifying high-order interdependencies via multivariate extensions of the mutual information. *Physical Review E*, *100*(3), 032305. https://doi.org/10.1103/PhysRevE.100.032305

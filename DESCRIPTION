@@ -1,0 +1,44 @@
+Package: psychHypergraph
+Type: Package
+Title: Information-Theoretic Hypergraph Analysis for Psychometric Data
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Minghao", "Yuan",
+      email = "rheniumyuan@foxmail.com",
+      role = c("aut", "cre")
+    )
+  )
+Description: Implements information-theoretic hypergraph analysis for
+    psychometric data based on Marinazzo et al. (2024) and Possenti et 
+    al. (2026). The package provides tools for constructing psychometric 
+    hypergraphs, identifying synergistic and redundant higher-order 
+    interactions, centrality analysis, clustering, and visualization.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    stats,
+    utils,
+    grDevices,
+    igraph,
+    qgraph,
+    ggplot2,
+    psych,
+    boot,
+    HyperG,
+    dplyr,
+    Matrix,
+    future,
+    future.apply
+Suggests:
+    knitr,
+    rmarkdown,
+    covr,
+    tidyr,
+    purrr,
+    tibble,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

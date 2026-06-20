@@ -305,6 +305,8 @@ node_degree <- function(object, scale = c("raw","zscore","relative")){
 #' @param sort_nodes Logical; if \code{TRUE}, nodes are ordered
 #' according to centrality values.
 #'
+#' @param labels Optional vector of node labels to display instead
+#'
 #' @details
 #'
 #' The plot compares node centrality across different hypergraph
@@ -378,7 +380,8 @@ plot_node_degree <- function(
     style = c("line", "point", "both"),
     orientation = c("vertical", "horizontal"),
     rotate_labels = TRUE,
-    sort_nodes = FALSE
+    sort_nodes = FALSE,
+    labels = NULL
 ){
 
   if(!inherits(object, "psychHypergraph")){
@@ -418,15 +421,44 @@ plot_node_degree <- function(
     )
   )
 
+  # Apply custom labels if provided
+  if (!is.null(labels)) {
+    orig_nodes <- colnames(object$normalized_data)
+
+    # Validate label length
+    if (length(labels) != length(orig_nodes)) {
+      stop("Length of labels (", length(labels),
+           ") must match number of nodes (", length(orig_nodes), ")")
+    }
+
+    # Create mapping from original node names to custom labels
+    label_map <- setNames(labels, orig_nodes)
+
+    # Add display label column to data frame
+    deg_df$node_label <- label_map[as.character(deg_df$node_name)]
+
+    # Ensure node_label is character (in case labels are factors)
+    deg_df$node_label <- as.character(deg_df$node_label)
+
+  } else {
+    # Use original node names as labels
+    deg_df$node_label <- deg_df$node_name
+  }
+
   # node order
   if(sort_nodes){
-    tmp <- deg_df[deg_df$degree_type == degree_type[1] & deg_df$graph_type == graph_type[1],]
+    tmp <- deg_df[deg_df$degree_type == degree_type[1] &
+                    deg_df$graph_type == graph_type[1],]
     node_order <- tmp$node_name[order(tmp$value, decreasing = TRUE)]
-  }else{
+  } else {
     node_order <- colnames(object$normalized_data)
   }
+
+  # Convert node_name to factor with the correct order
+  # This preserves the sorting while allowing custom display labels
   deg_df$node_name <- factor(deg_df$node_name, levels = node_order)
 
+  # For horizontal orientation, ensure proper ordering
   if(orientation == "horizontal"){
     deg_df <- deg_df[order(deg_df$node_name), ]
   }
@@ -438,19 +470,14 @@ plot_node_degree <- function(
       hjust = 1,
       vjust = 0.5
     )
-  }else{
+  } else {
     x_text <- ggplot2::element_text()
   }
 
   # axis labels
-  #ylab_text <- switch(
-  #  scale,
-  #  raw = "Degree Value",
-  #  zscore = "Z-score Degree Value",
-  #  relative = "Relative Degree Value"
-  #)
   ylab_text <- "Degree Value"
 
+  # Create the plot
   if(orientation == "vertical"){
     p <- ggplot2::ggplot(
       deg_df,
@@ -466,12 +493,16 @@ plot_node_degree <- function(
         ncol = 1,
         scales = "free_y"
       ) +
+      # Use custom labels for x-axis
+      ggplot2::scale_x_discrete(
+        labels = setNames(deg_df$node_label, deg_df$node_name)
+      ) +
       ggplot2::labs(
         x = "Node",
         y = ylab_text,
         color = "Hyperedge Type"
       )
-  }else{
+  } else {
     p <- ggplot2::ggplot(
       deg_df,
       ggplot2::aes(
@@ -486,6 +517,10 @@ plot_node_degree <- function(
         cols = ggplot2::vars(degree_label),
         scales = "free_x"
       ) +
+      # Use custom labels for y-axis
+      ggplot2::scale_y_discrete(
+        labels = setNames(deg_df$node_label, deg_df$node_name)
+      ) +
       ggplot2::labs(
         x = ylab_text,
         y = "Node",
@@ -493,11 +528,13 @@ plot_node_degree <- function(
       )
   }
 
+  # Add line or point geometries
   if(style == "line" || style == "both"){
     if(orientation == "vertical"){
-      # 垂直布局使用 geom_line
+      # Vertical layout: standard geom_line
       p <- p + ggplot2::geom_line(linewidth = 0.8)
     } else {
+      # Horizontal layout: use geom_path with ordered data
       p <- p + ggplot2::geom_path(
         data = deg_df[order(deg_df$node_name), ],
         linewidth = 0.8,
@@ -544,5 +581,4 @@ plot_node_degree <- function(
   }
 
   return(p)
-
 }

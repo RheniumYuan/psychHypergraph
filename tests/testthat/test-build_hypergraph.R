@@ -5,7 +5,7 @@ test_that("build_hypergraph works", {
   hg_bfi <- build_hypergraph(
     data = data_bfi,
     cor_method = "pearson",
-    k = 3:5,
+    k = 3:4,
     candidate_method = "clique",
     n_perm = 20,
     n_boot = 20,

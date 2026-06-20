@@ -1,7 +1,7 @@
 Package: psychHypergraph
 Type: Package
 Title: Information-Theoretic Hypergraph Analysis for Psychometric Data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person(
       "Minghao", "Yuan",

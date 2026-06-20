@@ -12,7 +12,8 @@ plot_node_degree(
   style = c("line", "point", "both"),
   orientation = c("vertical", "horizontal"),
   rotate_labels = TRUE,
-  sort_nodes = FALSE
+  sort_nodes = FALSE,
+  labels = NULL
 )
 }
 \arguments{
@@ -59,6 +60,8 @@ readability.}
 
 \item{sort_nodes}{Logical; if \code{TRUE}, nodes are ordered
 according to centrality values.}
+
+\item{labels}{Optional vector of node labels to display instead}
 }
 \value{
 A \code{ggplot2} object.
